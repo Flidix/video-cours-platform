@@ -7,7 +7,6 @@ export const EnvironmentSchema = z
       PORT: z.coerce.number().positive(),
       API_PREFIX: z.string().startsWith('/'),
       ALLOWED_ORIGINS: z.string(),
-      BCRYPT_SALT: z.coerce.number(),
       DATABASE_HOST: z.string().min(1),
       DATABASE_PORT: z.coerce.number().positive(),
       DATABASE_USER: z.string().min(1),
