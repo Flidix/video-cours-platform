@@ -37,7 +37,7 @@ cp .env-example .env
 
 <br />
 
-## How to use it?
+## How to start project?
 
 ### Production start
 
