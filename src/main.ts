@@ -12,12 +12,7 @@ import { ResponseInterceptor } from '@shared/common/interceptors/response.interc
 
 (async () => {
   const app = await NestFactory.create(RootModule);
-  const swagger = new DocumentBuilder()
-    .setTitle('Nest Typeorm starter')
-    .setVersion('1.0')
-    .addCookieAuth('accessToken')
-    .addCookieAuth('refreshToken')
-    .build();
+  const swagger = new DocumentBuilder().setTitle('Nest Typeorm starter').setVersion('1.0').build();
 
   app.use(cookieParser());
   app.setGlobalPrefix(Environment.API_PREFIX);
