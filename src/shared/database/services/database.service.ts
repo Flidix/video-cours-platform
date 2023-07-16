@@ -1,3 +1,5 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { DataSource } from 'typeorm';
 
 import { databaseTables } from '../constants';
@@ -8,7 +10,7 @@ import { DatabaseRepositories } from '../types';
 export class DatabaseService {
   protected database: DatabaseRepositories;
 
-  constructor(dataSource: DataSource) {
+  constructor(@InjectDataSource() dataSource: DataSource) {
     const database = Object.entries(databaseTables).reduce((acc, [key, name]) => {
       const entityMetadata = dataSource.entityMetadatas.find((item) => item.tableName === name);
 
