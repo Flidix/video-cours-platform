@@ -1,4 +1,3 @@
-import {TypeOrmModuleOptions} from "@nestjs/typeorm";
 import { ConfigService } from "@nestjs/config";
 import {JwtModuleOptions} from "@nestjs/jwt";
 

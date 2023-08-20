@@ -1,13 +1,11 @@
-import { IsNotEmpty, IsNumber } from "class-validator"
+import { IsNotEmpty } from 'class-validator';
 
 export class UpdateVideoDto {
+  @IsNotEmpty()
+  @IsNotEmpty()
+  description: string;
 
-   @IsNotEmpty()
-   @IsNotEmpty()
-   description: string
-
-   @IsNotEmpty()
-   @IsNotEmpty()
-   name: string
-
+  @IsNotEmpty()
+  @IsNotEmpty()
+  name: string;
 }
