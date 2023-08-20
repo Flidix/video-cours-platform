@@ -1,16 +1,16 @@
-import {BaseEntity} from "@shared/database/entities/base.entity";
-import {Column, Entity, ManyToOne} from "typeorm";
-import {databaseTables} from "@shared/database/constants";
-import { UserEntity } from "src/user/entities/user.entity";
-import { VideoEntity } from "src/video/entities/video.entity";
+import { Entity, ManyToOne } from 'typeorm';
 
-@Entity({name: databaseTables.listens})
-export class ListenEntity extends BaseEntity{
+import { BaseEntity } from '@shared/database/entities/base.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
+import { VideoEntity } from 'src/video/entities/video.entity';
 
-   @ManyToOne(() => UserEntity, (user) => user.history)
-   fromUser: UserEntity
+import { databaseTables } from '@shared/database/constants';
 
-   @ManyToOne(() => VideoEntity)
-   toVideo: VideoEntity
+@Entity({ name: databaseTables.listens })
+export class ListenEntity extends BaseEntity {
+  @ManyToOne(() => UserEntity, (user) => user.history)
+  fromUser: UserEntity;
 
+  @ManyToOne(() => VideoEntity)
+  toVideo: VideoEntity;
 }

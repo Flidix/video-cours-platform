@@ -1,7 +1,10 @@
 import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+
 import { OrderService } from './order.service';
-import { CurrentUser } from 'src/auth/decorators/curentUser';
+
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+
+import { CurrentUser } from 'src/auth/decorators/curentUser';
 
 @Controller('order')
 export class OrderController {
@@ -14,7 +17,11 @@ export class OrderController {
   }
 
   @Get('user/:userId/cours/:courseId/order/:orderId/success')
-  complateOrder(@Param('userId') userId: number, @Param('courseId') courseId: number, @Param('orderId') orderId: number) {
+  complateOrder(
+    @Param('userId') userId: number,
+    @Param('courseId') courseId: number,
+    @Param('orderId') orderId: number,
+  ) {
     return this.orderService.complateOrder(userId, courseId, orderId);
   }
 }

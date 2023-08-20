@@ -15,10 +15,10 @@ export class OrderEntity extends BaseEntity {
   isPaid: boolean;
 
   @Column()
-  userId: number
+  userId: number;
 
   @Column()
-  courseId: number
+  courseId: number;
 
   @ManyToOne(() => UserEntity, (user) => user.orders)
   fromUser: UserEntity;

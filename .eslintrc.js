@@ -20,6 +20,8 @@ module.exports = {
     'no-trailing-spaces': [1],
     '@typescript-eslint/no-unused-vars': [2],
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unused-vars': [1],
+
   },
   settings: {
     'import/resolver': {
