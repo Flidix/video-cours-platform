@@ -65,7 +65,6 @@ export class CoursController {
     @Body() dto: UpdateCoursDto,
     @Param('id') id: number,
   ) {
-    console.log(dto);
     return this.coursService.updeteCours(dto, userId, id);
   }
 }
