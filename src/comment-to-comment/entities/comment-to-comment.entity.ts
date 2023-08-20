@@ -1,24 +1,25 @@
-import {BaseEntity} from "@shared/database/entities/base.entity";
-import {Column, Entity, ManyToOne} from "typeorm";
-import {databaseTables} from "@shared/database/constants";
-import { UserEntity } from "src/user/entities/user.entity";
-import { CommentEntity } from "src/comment/entities/comment.entity";
+import { Column, Entity, ManyToOne } from 'typeorm';
 
-@Entity({name: databaseTables.commentsToComments})
-export class CommentToCommentEntity extends BaseEntity{
-   @Column()
-   comment: string
+import { CommentEntity } from '../../comment/entities/comment.entity';
+import { BaseEntity } from '@shared/database/entities/base.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 
-   @ManyToOne(() => UserEntity)
-   fromUser: UserEntity;
+import { databaseTables } from '@shared/database/constants';
 
-   @Column()
-   userId: number
+@Entity({ name: databaseTables.commentsToComments })
+export class CommentToCommentEntity extends BaseEntity {
+  @Column()
+  comment: string;
 
-   @ManyToOne(() => CommentEntity, (comment) => comment.comments)
-   toComment: CommentEntity;
+  @ManyToOne(() => UserEntity)
+  fromUser: UserEntity;
 
-   @Column()
-   commentId: number
+  @Column()
+  userId: number;
 
+  @ManyToOne(() => CommentEntity, (comment) => comment.comments)
+  toComment: CommentEntity;
+
+  @Column()
+  commentId: number;
 }

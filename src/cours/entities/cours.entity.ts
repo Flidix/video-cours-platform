@@ -1,47 +1,48 @@
-   import {BaseEntity} from "@shared/database/entities/base.entity";
-   import {Column, Entity, ManyToOne, OneToMany} from "typeorm";
-   import {databaseTables} from "@shared/database/constants";
-   import { UserEntity } from "src/user/entities/user.entity";
-   import { RatingEntity } from "src/rating/entities/rating.entity";
-   import { VideoEntity } from "src/video/entities/video.entity";
-   import { CoursToCategory } from "src/category/entities/cours-to-category.entity";
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
-   @Entity({name: databaseTables.courses})
-   export class CoursEntity extends BaseEntity{
+import { BaseEntity } from '@shared/database/entities/base.entity';
+import { CoursToCategory } from 'src/category/entities/cours-to-category.entity';
+import { RatingEntity } from 'src/rating/entities/rating.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
+import { VideoEntity } from 'src/video/entities/video.entity';
 
-      @Column()
-      name: string
+import { databaseTables } from '@shared/database/constants';
 
-      @Column()
-      avatar: string
+@Entity({ name: databaseTables.courses })
+export class CoursEntity extends BaseEntity {
+  @Column()
+  name: string;
 
-      @Column({default: 0})
-      price: number
+  @Column()
+  avatar: string;
 
-      @Column()
-      description: string
+  @Column({ default: 0 })
+  price: number;
 
-      @Column({default: 0})
-      likesCount: number
+  @Column()
+  description: string;
 
-      @Column({default: false})
-      isOficial: boolean
+  @Column({ default: 0 })
+  likesCount: number;
 
-      @Column({default: 0})
-      stars: number
+  @Column({ default: false })
+  isOficial: boolean;
 
-      @Column()
-      userId: number
+  @Column({ default: 0 })
+  stars: number;
 
-      @ManyToOne(() => UserEntity, (user) => user.courses)
-      user: UserEntity
+  @Column()
+  userId: number;
 
-      @OneToMany(() => RatingEntity, (cours) => cours.toCours)
-      ratings: RatingEntity[]
+  @ManyToOne(() => UserEntity, (user) => user.courses)
+  user: UserEntity;
 
-      @OneToMany(() => VideoEntity, (video) => video.toCours)
-      videos: VideoEntity[]
+  @OneToMany(() => RatingEntity, (cours) => cours.toCours)
+  ratings: RatingEntity[];
 
-      @OneToMany(() => CoursToCategory, (coursToCategory) => coursToCategory.cours)
-      coursToCategory: CoursToCategory[]
-   }
+  @OneToMany(() => VideoEntity, (video) => video.toCours)
+  videos: VideoEntity[];
+
+  @OneToMany(() => CoursToCategory, (coursToCategory) => coursToCategory.cours)
+  coursToCategory: CoursToCategory[];
+}

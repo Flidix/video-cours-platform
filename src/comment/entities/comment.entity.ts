@@ -1,24 +1,26 @@
-import {BaseEntity} from "@shared/database/entities/base.entity";
-import {Column, Entity, ManyToOne, OneToMany} from "typeorm";
-import {databaseTables} from "@shared/database/constants";
-import { UserEntity } from "src/user/entities/user.entity";
-import { VideoEntity } from "src/video/entities/video.entity";
-import { CommentToCommentEntity } from "src/comment-to-comment/entities/comment-to-comment.entity";
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
-@Entity({name: databaseTables.comments})
-export class CommentEntity extends BaseEntity{
-   @Column()
-   comment: string
+import { CommentToCommentEntity } from '../../comment-to-comment/entities/comment-to-comment.entity';
+import { BaseEntity } from '@shared/database/entities/base.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
+import { VideoEntity } from 'src/video/entities/video.entity';
 
-   @ManyToOne(() => UserEntity)
-   fromUser: UserEntity;
+import { databaseTables } from '@shared/database/constants';
 
-   @Column()
-   userId: number
+@Entity({ name: databaseTables.comments })
+export class CommentEntity extends BaseEntity {
+  @Column()
+  comment: string;
 
-   @ManyToOne(() => VideoEntity, (video) => video.comments)
-   toVideo: VideoEntity;
+  @ManyToOne(() => UserEntity)
+  fromUser: UserEntity;
 
-   @OneToMany(() => CommentToCommentEntity, (commentToComment) => commentToComment.toComment)
-   comments: CommentToCommentEntity[]
+  @Column()
+  userId: number;
+
+  @ManyToOne(() => VideoEntity, (video) => video.comments)
+  toVideo: VideoEntity;
+
+  @OneToMany(() => CommentToCommentEntity, (commentToComment) => commentToComment.toComment)
+  comments: CommentToCommentEntity[];
 }

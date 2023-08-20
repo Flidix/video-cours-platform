@@ -1,19 +1,17 @@
-import { IsArray, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCoursDto {
+  @IsString()
+  name: string;
 
-   @IsString()
-   name: string
+  avatar: string;
 
-   avatar: string
+  @IsNotEmpty()
+  price: number;
 
-   @IsNotEmpty()
-   price: number
+  @IsString()
+  description: string;
 
-   @IsString()
-   description: string
-
-   @IsArray()
-   categoties: number[]
-
+  @IsArray()
+  categoties: number[];
 }

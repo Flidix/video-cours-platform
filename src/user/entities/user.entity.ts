@@ -1,51 +1,53 @@
-import {BaseEntity} from "@shared/database/entities/base.entity";
-import {Column, Entity, ManyToOne, OneToMany} from "typeorm";
-import {databaseTables} from "@shared/database/constants";
-import { SubscribeEntity } from "src/subscribe/entities/subscribe.entity";
-import { CoursEntity } from "src/cours/entities/cours.entity";
-import { LikeEntity } from "src/like/entities/like.entity";
-import { ListenEntity } from "src/listen/entities/listen.entity";
-import { BuedCoursesEntity } from "src/byed-courses/entities/bued-courses.entity";
-import { OrderEntity } from "src/order/entities/order.entity";
+import { Column, Entity, OneToMany } from 'typeorm';
 
-@Entity({name: databaseTables.users})
-export class UserEntity extends BaseEntity{
-    @Column()
-    email: string
+import { BaseEntity } from '@shared/database/entities/base.entity';
+import { BuedCoursesEntity } from 'src/byed-courses/entities/bued-courses.entity';
+import { CoursEntity } from 'src/cours/entities/cours.entity';
+import { LikeEntity } from 'src/like/entities/like.entity';
+import { ListenEntity } from 'src/listen/entities/listen.entity';
+import { OrderEntity } from 'src/order/entities/order.entity';
+import { SubscribeEntity } from 'src/subscribe/entities/subscribe.entity';
 
-    @Column()
-    username: string
+import { databaseTables } from '@shared/database/constants';
 
-    @Column({ select: false })
-    password: string
+@Entity({ name: databaseTables.users })
+export class UserEntity extends BaseEntity {
+  @Column()
+  email: string;
 
-    @Column({ default: false })
-    isAdmin: boolean
+  @Column()
+  username: string;
 
-    @Column({ default: false })
-    isOficial: boolean
+  @Column({ select: false })
+  password: string;
 
-    @Column({ default: 0 })
-    subscribersCount: number
+  @Column({ default: false })
+  isAdmin: boolean;
 
-    @OneToMany(() => SubscribeEntity, (subscribe) => subscribe.fromUser)
-    subscription: SubscribeEntity[]
+  @Column({ default: false })
+  isOficial: boolean;
 
-    @OneToMany(() => SubscribeEntity, (subscribe) => subscribe.toUser)
-    subscribers: SubscribeEntity[]
+  @Column({ default: 0 })
+  subscribersCount: number;
 
-    @OneToMany(() => CoursEntity, (cours) => cours.user)
-    courses: CoursEntity[]
+  @OneToMany(() => SubscribeEntity, (subscribe) => subscribe.fromUser)
+  subscription: SubscribeEntity[];
 
-    @OneToMany(() => LikeEntity, (like) => like.fromUser)
-    likes: LikeEntity[]
+  @OneToMany(() => SubscribeEntity, (subscribe) => subscribe.toUser)
+  subscribers: SubscribeEntity[];
 
-    @OneToMany(() => ListenEntity, (listen) => listen.fromUser)
-    history: ListenEntity[]
+  @OneToMany(() => CoursEntity, (cours) => cours.user)
+  courses: CoursEntity[];
 
-    @OneToMany(() => BuedCoursesEntity, (buedCourses) => buedCourses.fromUser)
-    byedCourses: BuedCoursesEntity[]
+  @OneToMany(() => LikeEntity, (like) => like.fromUser)
+  likes: LikeEntity[];
 
-    @OneToMany(() => OrderEntity, (oredr) => oredr.fromUser)
-    orders: OrderEntity[]
+  @OneToMany(() => ListenEntity, (listen) => listen.fromUser)
+  history: ListenEntity[];
+
+  @OneToMany(() => BuedCoursesEntity, (buedCourses) => buedCourses.fromUser)
+  byedCourses: BuedCoursesEntity[];
+
+  @OneToMany(() => OrderEntity, (oredr) => oredr.fromUser)
+  orders: OrderEntity[];
 }

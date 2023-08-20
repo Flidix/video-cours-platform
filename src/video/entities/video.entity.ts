@@ -1,34 +1,35 @@
-import {BaseEntity} from "@shared/database/entities/base.entity";
-import {Column, Entity, ManyToOne, OneToMany} from "typeorm";
-import {databaseTables} from "@shared/database/constants";
-import { UserEntity } from "src/user/entities/user.entity";
-import { CoursEntity } from "src/cours/entities/cours.entity";
-import { CommentEntity } from "src/comment/entities/comment.entity";
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
-@Entity({name: databaseTables.videos})
-export class VideoEntity extends BaseEntity{
+import { BaseEntity } from '@shared/database/entities/base.entity';
+import { CommentEntity } from 'src/comment/entities/comment.entity';
+import { CoursEntity } from 'src/cours/entities/cours.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 
-   @Column()
-   video: string
+import { databaseTables } from '@shared/database/constants';
 
-   @Column()
-   description: string
+@Entity({ name: databaseTables.videos })
+export class VideoEntity extends BaseEntity {
+  @Column()
+  video: string;
 
-   @Column()
-   name: string
+  @Column()
+  description: string;
 
-   @Column({default: 0})
-   likesCount: number
+  @Column()
+  name: string;
 
-   @ManyToOne(() => UserEntity)
-   fromUser: UserEntity
+  @Column({ default: 0 })
+  likesCount: number;
 
-   @ManyToOne(() => CoursEntity, (cours) => cours.videos)
-   toCours: CoursEntity
+  @ManyToOne(() => UserEntity)
+  fromUser: UserEntity;
 
-   @OneToMany(() => CommentEntity, (comment) => comment.toVideo)
-   comments: CommentEntity[]
+  @ManyToOne(() => CoursEntity, (cours) => cours.videos)
+  toCours: CoursEntity;
 
-   @Column()
-   userId: number
+  @OneToMany(() => CommentEntity, (comment) => comment.toVideo)
+  comments: CommentEntity[];
+
+  @Column()
+  userId: number;
 }

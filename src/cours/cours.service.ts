@@ -93,7 +93,7 @@ export class CoursService extends DatabaseService {
   }
 
   async updeteCours(dto: UpdateCoursDto, userId: number, coursId: number) {
-    const { categoties, ...newCours } = dto;
+    const newCours = { ...dto };
     await this.checkCourse(userId, coursId);
     await this.categoryService.addCategoryToCourse(coursId, dto.categoties);
     await this.database.courses.update({ id: coursId }, newCours);

@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ListenService } from './listen.service';
+
 import { ListenController } from './listen.controller';
+
+import { ListenService } from './listen.service';
 
 @Module({
   controllers: [ListenController],
-  providers: [ListenService]
+  providers: [ListenService],
 })
 export class ListenModule {}

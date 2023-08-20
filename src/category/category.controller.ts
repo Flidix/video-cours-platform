@@ -1,8 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+
 import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dtos/create-categoty.dto';
+
 import { RoleGuard } from 'src/auth/guards/role.guard';
-import { updateCategoryDto } from './dtos/update-categoty.dto';
+
+import { CreateCategoryDto } from './dtos/create-categoty.dto';
+import { UpdateCategoryDto } from './dtos/update-categoty.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -32,8 +35,7 @@ export class CategoryController {
 
   @UseGuards(RoleGuard)
   @Patch()
-  updateCategory(@Body() dto: updateCategoryDto) {
+  updateCategory(@Body() dto: UpdateCategoryDto) {
     return this.categoryService.updateCategory(dto);
   }
-  
 }

@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import * as process from 'process';
+import { startOfMonth, subMonths } from 'date-fns';
 import { DataSource } from 'typeorm';
-import { subMonths, subSeconds,  startOfMonth, startOfSecond } from 'date-fns';
-
 
 import { DatabaseService } from '@shared/database/services/database.service';
 
@@ -75,7 +73,7 @@ export class UserService extends DatabaseService {
 
   async getNews(userId: number) {
     const currentDate = new Date();
-    const oneMonthAgo = subSeconds(startOfSecond(currentDate), 100);
+    const oneMonthAgo = subMonths(startOfMonth(currentDate), 100);
 
     const news = await this.database.users
       .createQueryBuilder('user')

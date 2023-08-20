@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ByedCoursesService } from './byed-courses.service';
+
 import { ByedCoursesController } from './byed-courses.controller';
+
+import { ByedCoursesService } from './byed-courses.service';
 
 @Module({
   controllers: [ByedCoursesController],
-  providers: [ByedCoursesService]
+  providers: [ByedCoursesService],
 })
 export class ByedCoursesModule {}

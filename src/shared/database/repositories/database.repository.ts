@@ -87,5 +87,4 @@ export class DatabaseRepository<T extends object> {
   save(options) {
     return this.repository.save(options);
   }
-
 }

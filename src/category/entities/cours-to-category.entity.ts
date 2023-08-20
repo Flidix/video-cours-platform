@@ -1,21 +1,22 @@
-import {BaseEntity} from "@shared/database/entities/base.entity";
-import {Column, Entity, ManyToOne} from "typeorm";
-import {databaseTables} from "@shared/database/constants";
-import { CoursEntity } from "src/cours/entities/cours.entity";
-import { CategoryEntity } from "./category.entity";
+import { Column, Entity, ManyToOne } from 'typeorm';
 
-@Entity({name: databaseTables.coursToCategory})
-export class CoursToCategory extends BaseEntity{
+import { CategoryEntity } from './category.entity';
+import { BaseEntity } from '@shared/database/entities/base.entity';
+import { CoursEntity } from 'src/cours/entities/cours.entity';
 
-   @ManyToOne(() => CoursEntity, (cours) => cours.coursToCategory)
-   cours: CoursEntity;
+import { databaseTables } from '@shared/database/constants';
 
-   @Column()
-   coursId: number;
+@Entity({ name: databaseTables.coursToCategory })
+export class CoursToCategory extends BaseEntity {
+  @ManyToOne(() => CoursEntity, (cours) => cours.coursToCategory)
+  cours: CoursEntity;
 
-   @ManyToOne(() => CategoryEntity, (category) => category.coursToCategory)
-   category: CategoryEntity;
+  @Column()
+  coursId: number;
 
-   @Column()
-   categoryId: number;
+  @ManyToOne(() => CategoryEntity, (category) => category.coursToCategory)
+  category: CategoryEntity;
+
+  @Column()
+  categoryId: number;
 }

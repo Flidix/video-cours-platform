@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import e from 'express';
 import { DataSource } from 'typeorm';
 
 import { DatabaseService } from '@shared/database/services/database.service';

@@ -1,11 +1,27 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UploadedFile, UseGuards, UseInterceptors} from '@nestjs/common';
-import { CoursService } from './cours.service';
-import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
-import { CurrentUser } from 'src/auth/decorators/curentUser';
-import { CreateCoursDto } from './dtos/create-cours.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UpdateCoursDto } from './dtos/updete-cours.dto';
+
+import { CoursService } from './cours.service';
+
+import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { RoleGuard } from 'src/auth/guards/role.guard';
+
+import { CurrentUser } from 'src/auth/decorators/curentUser';
+
+import { CreateCoursDto } from './dtos/create-cours.dto';
+import { UpdateCoursDto } from './dtos/updete-cours.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('cours')
@@ -18,8 +34,7 @@ export class CoursController {
     return await this.coursService.changeCoursOficial(id);
   }
 
-
-  @Get("oficial/all")
+  @Get('oficial/all')
   getCoursOficial() {
     return this.coursService.getOficial();
   }
@@ -27,7 +42,7 @@ export class CoursController {
   @Post()
   @UseInterceptors(FileInterceptor('avatar'))
   createCours(
-    @CurrentUser("id") userId,
+    @CurrentUser('id') userId,
     @Body() dto: CreateCoursDto,
     @UploadedFile() files: { avatar?: Express.Multer.File[] },
   ) {
@@ -35,18 +50,18 @@ export class CoursController {
   }
 
   @Get(':id')
-  getCoursById(@CurrentUser("id") userId: number, @Param('id') id: number) {
+  getCoursById(@CurrentUser('id') userId: number, @Param('id') id: number) {
     return this.coursService.getCoursById(id, userId);
   }
 
   @Delete(':id')
-  deleteCours(@CurrentUser("id") userId: number, @Param('id') id: number) {
+  deleteCours(@CurrentUser('id') userId: number, @Param('id') id: number) {
     return this.coursService.deleteCours(userId, id);
   }
 
   @Patch(':id')
   updateCours(
-    @CurrentUser("id") userId: number,
+    @CurrentUser('id') userId: number,
     @Body() dto: UpdateCoursDto,
     @Param('id') id: number,
   ) {

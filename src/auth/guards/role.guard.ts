@@ -7,13 +7,12 @@ import { DataSource } from 'typeorm';
 import { UserService } from '../../user/user.service';
 import { DatabaseService } from '@shared/database/services/database.service';
 
-
 @Injectable()
 export class RoleGuard extends DatabaseService implements CanActivate {
   constructor(
-      @InjectDataSource() datasource: DataSource,
-      private readonly jwtService: JwtService,
-      private readonly userService: UserService,
+    @InjectDataSource() datasource: DataSource,
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService,
   ) {
     super(datasource);
   }
@@ -21,7 +20,6 @@ export class RoleGuard extends DatabaseService implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     try {
-
       const authHeader = req.headers.authorization;
       const bearer = authHeader.split(' ')[0];
       const token = authHeader.split(' ')[1];

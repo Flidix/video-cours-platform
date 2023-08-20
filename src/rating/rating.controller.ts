@@ -1,8 +1,12 @@
 import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
+
 import { RatingService } from './rating.service';
-import { CreteRatingDto } from './dtos/crete-rating.dto';
-import { CurrentUser } from 'src/auth/decorators/curentUser';
+
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+
+import { CurrentUser } from 'src/auth/decorators/curentUser';
+
+import { CreteRatingDto } from './dtos/crete-rating.dto';
 import { UpdateRatingDto } from './dtos/update-rating.dto';
 
 @UseGuards(JwtAuthGuard)
@@ -24,5 +28,4 @@ export class RatingController {
   updateRating(@CurrentUser('id') userId: number, @Body() dto: UpdateRatingDto) {
     return this.ratingService.updateRating(dto, userId);
   }
-
 }

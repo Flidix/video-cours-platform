@@ -1,9 +1,24 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { VideoService } from './video.service';
-import { CurrentUser } from 'src/auth/decorators/curentUser';
-import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
-import { AddVideoToCoursDto } from './dtos/add-video-to-cours.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+
+import { VideoService } from './video.service';
+
+import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+
+import { CurrentUser } from 'src/auth/decorators/curentUser';
+
+import { AddVideoToCoursDto } from './dtos/add-video-to-cours.dto';
 import { UpdateVideoDto } from './dtos/update-video.dto';
 
 @UseGuards(JwtAuthGuard)
@@ -17,12 +32,12 @@ export class VideoController {
     @CurrentUser('id') userId: number,
     @Body() dto: AddVideoToCoursDto,
     @UploadedFile() files: { video?: Express.Multer.File[] },
-  ){
+  ) {
     return this.videoService.addVideoToCours(dto, userId, files);
   }
 
   @Delete(':id')
-  deleteVideo(@CurrentUser('id') userId: number, @Param('id') id: number){
+  deleteVideo(@CurrentUser('id') userId: number, @Param('id') id: number) {
     return this.videoService.deleteVideo(id, userId);
   }
 
@@ -36,7 +51,7 @@ export class VideoController {
   }
 
   @Get(':id')
-  getVideoById(@CurrentUser('id') userId: number, @Param('id') id: number){
+  getVideoById(@CurrentUser('id') userId: number, @Param('id') id: number) {
     return this.videoService.getVideoById(id, userId);
   }
 }

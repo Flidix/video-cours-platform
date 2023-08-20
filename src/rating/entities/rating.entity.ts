@@ -1,28 +1,28 @@
-import {BaseEntity} from "@shared/database/entities/base.entity";
-import {Column, Entity, ManyToOne} from "typeorm";
-import {databaseTables} from "@shared/database/constants";
-import { UserEntity } from "src/user/entities/user.entity";
-import { CoursEntity } from "src/cours/entities/cours.entity";
+import { Column, Entity, ManyToOne } from 'typeorm';
 
-@Entity({name: databaseTables.ratings})
-export class RatingEntity extends BaseEntity{
+import { CoursEntity } from '../../cours/entities/cours.entity';
+import { BaseEntity } from '@shared/database/entities/base.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 
-   @Column()
-   description: string
+import { databaseTables } from '@shared/database/constants';
 
-   @Column()
-   stars: number
+@Entity({ name: databaseTables.ratings })
+export class RatingEntity extends BaseEntity {
+  @Column()
+  description: string;
 
-   @ManyToOne(() => UserEntity)
-   fromUser: UserEntity;
+  @Column()
+  stars: number;
 
-   @ManyToOne(() => CoursEntity, (cours) => cours.ratings)
-   toCours: CoursEntity;
+  @ManyToOne(() => UserEntity)
+  fromUser: UserEntity;
 
-   @Column()
-   userId: number
+  @ManyToOne(() => CoursEntity, (cours) => cours.ratings)
+  toCours: CoursEntity;
 
-   @Column()
-   courseId: number
+  @Column()
+  userId: number;
 
+  @Column()
+  courseId: number;
 }

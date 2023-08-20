@@ -1,15 +1,16 @@
-import {BaseEntity} from "@shared/database/entities/base.entity";
-import {Entity, ManyToOne} from "typeorm";
-import {databaseTables} from "@shared/database/constants";
-import { UserEntity } from "src/user/entities/user.entity";
-import { CoursEntity } from "src/cours/entities/cours.entity";
+import { Entity, ManyToOne } from 'typeorm';
 
-@Entity({name: databaseTables.likes})
-export class LikeEntity extends BaseEntity{
+import { CoursEntity } from '../../cours/entities/cours.entity';
+import { BaseEntity } from '@shared/database/entities/base.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 
-    @ManyToOne(() => UserEntity, (user) => user.likes)
-    fromUser: UserEntity;
+import { databaseTables } from '@shared/database/constants';
 
-    @ManyToOne(() => CoursEntity)
-    toCours: CoursEntity;
+@Entity({ name: databaseTables.likes })
+export class LikeEntity extends BaseEntity {
+  @ManyToOne(() => UserEntity, (user) => user.likes)
+  fromUser: UserEntity;
+
+  @ManyToOne(() => CoursEntity)
+  toCours: CoursEntity;
 }
