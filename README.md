@@ -16,7 +16,7 @@ Basic Nest.js starter for REST API, which includes:
 1. Clone starter
 
 ```bash
-git clone git@github.com:ArtemKurtiak/nest-typeorm-starter.git
+git clone git@github.com:ArtemKurtiak/server.git
 ```
 
 2. Install dependencies

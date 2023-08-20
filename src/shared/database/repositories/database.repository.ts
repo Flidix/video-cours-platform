@@ -79,4 +79,13 @@ export class DatabaseRepository<T extends object> {
       );
     }
   }
+
+  createQueryBuilder(alias?: string) {
+    return this.repository.createQueryBuilder(alias);
+  }
+
+  save(options) {
+    return this.repository.save(options);
+  }
+
 }

@@ -3,9 +3,10 @@ import { DataSource } from 'typeorm';
 
 import { Environment } from '@shared/variables/environment';
 
-const isDist = __dirname.endsWith('/dist');
+const isDist = __dirname.endsWith('dist');
 
 const filesExtension = isDist ? '.js' : '.ts';
+
 
 const dataSource = new DataSource({
   type: 'postgres',

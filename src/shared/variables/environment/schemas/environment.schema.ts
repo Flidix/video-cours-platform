@@ -12,6 +12,7 @@ export const EnvironmentSchema = z
       DATABASE_USER: z.string().min(1),
       DATABASE_PASSWORD: z.string(),
       DATABASE_NAME: z.string().min(1),
+      STRIPE_SECRET: z.string(),
     },
     { required_error: '.env file is required' },
   )
