@@ -19,7 +19,7 @@ export class AuthService extends DatabaseService {
     }
 
   async register(dto: AuthDto) {
-    // await this.database.users.checkNotExists({ email: dto.email });
+    await this.database.users.checkNotExists({ email: dto.email });
     const salt = await genSalt(10);
     const user = await this.database.users.create({
       ...dto,
@@ -34,7 +34,6 @@ export class AuthService extends DatabaseService {
 
   async logIn(dto: AuthDto) {
     const { email, password , username} = dto;
-    console.log({email, password, username});
     const user = await this.database.users.findOneOrFail({ where: { email , username} });
     const deHashPassword = await bcrypt.compare(password, user.password);
     if (!deHashPassword) {
@@ -80,7 +79,6 @@ export class AuthService extends DatabaseService {
       const timeDifferenceMinutes = Math.floor(
          (currentTime.getTime() - createdAtTime.getTime()) / (1000 * 60)
       );
-      console.log(timeDifferenceMinutes);
       if (timeDifferenceMinutes >= 2) {
          await this.database.users.delete({ id });
          throw new BadRequestException('User was created less than 2 minutes ago');
