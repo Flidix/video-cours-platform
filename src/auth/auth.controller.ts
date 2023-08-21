@@ -22,7 +22,7 @@ export class AuthController {
     return this.authService.getNewTokens(dto);
   }
 
-  @Get('confirmation/user/:id')
+  @Post('confirmation/user/:id')
   confirmation(@Param('id') id: number) {
     return this.authService.comfirmation(id);
   }
