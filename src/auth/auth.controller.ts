@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 
@@ -15,10 +15,15 @@ export class AuthController {
   }
   @Post('login')
   async login(@Body() dto: AuthDto) {
-    return this.authService.login(dto);
+    return this.authService.logIn(dto);
   }
   @Post('access-token')
   async getNewTokens(@Body() dto: RefreshTokenDto) {
     return this.authService.getNewTokens(dto);
+  }
+
+  @Get('confirmation/user/:id')
+  confirmation(@Param('id') id: number) {
+    return this.authService.comfirmation(id);
   }
 }

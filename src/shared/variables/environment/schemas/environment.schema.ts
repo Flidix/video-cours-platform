@@ -13,6 +13,9 @@ export const EnvironmentSchema = z
       DATABASE_PASSWORD: z.string(),
       DATABASE_NAME: z.string().min(1),
       STRIPE_SECRET: z.string(),
+      NODE_MAILER_AUTH_EMAIL: z.string(),
+      SEND_FROM_EMAIL: z.string(),
+      PASSWORD: z.string(),
     },
     { required_error: '.env file is required' },
   )
