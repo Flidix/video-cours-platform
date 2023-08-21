@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, CreateDateColumn } from 'typeorm';
 
 import { BaseEntity } from '@shared/database/entities/base.entity';
 import { BuedCoursesEntity } from 'src/byed-courses/entities/bued-courses.entity';
@@ -29,6 +29,9 @@ export class UserEntity extends BaseEntity {
 
   @Column({ default: 0 })
   subscribersCount: number;
+
+  @CreateDateColumn()
+  lastLoginAt: Date
 
   @OneToMany(() => SubscribeEntity, (subscribe) => subscribe.fromUser)
   subscription: SubscribeEntity[];
