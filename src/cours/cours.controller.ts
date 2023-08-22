@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -22,11 +23,17 @@ import { CurrentUser } from 'src/auth/decorators/curentUser';
 
 import { CreateCoursDto } from './dtos/create-cours.dto';
 import { UpdateCoursDto } from './dtos/updete-cours.dto';
+import { SearchCoursDto } from './dtos/search-cours.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('cours')
 export class CoursController {
   constructor(private readonly coursService: CoursService) {}
+
+  @Get('search/by')
+  searchCours(@Query() search: SearchCoursDto) {
+    return this.coursService.searchCours(search);
+  }
 
   @UseGuards(RoleGuard)
   @Put('oficial/:id')

@@ -8,6 +8,7 @@ import { CategoryService } from 'src/category/category.service';
 import { FileService, FileTypes } from 'src/file/file.service';
 
 import { CreateCoursDto } from './dtos/create-cours.dto';
+import { SearchCoursDto } from './dtos/search-cours.dto';
 import { UpdateCoursDto } from './dtos/updete-cours.dto';
 
 @Injectable()
@@ -18,6 +19,18 @@ export class CoursService extends DatabaseService {
     private readonly categoryService: CategoryService,
   ) {
     super(datasource);
+  }
+
+  async searchCours(search: SearchCoursDto) {
+    const filter = search.filter.split(' ');
+    return await this.database.courses
+      .createQueryBuilder('cours')
+      .where('cours.name LIKE :search', { search: `%${search.name}%` })
+      .andWhere('cours.price <= :price', { price: search.price })
+      .orderBy(`cours.${filter[0]}`, filter[1] === 'DESC' ? 'DESC' : 'ASC')
+      .andWhere('cours.isOficial = :isOficial', { isOficial: search.isOficial })
+      .leftJoinAndSelect('cours.user', 'user')
+      .getMany();
   }
 
   async changeCoursOficial(id: number) {
