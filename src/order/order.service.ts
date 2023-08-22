@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
@@ -8,6 +8,8 @@ import { Environment } from '@shared/variables/environment';
 
 import { DatabaseService } from '@shared/database/services/database.service';
 import { ByedCoursesService } from 'src/byed-courses/byed-courses.service';
+import { authEmailPage } from 'src/auth/pages/auth-email.page';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class OrderService extends DatabaseService {
@@ -16,6 +18,7 @@ export class OrderService extends DatabaseService {
   constructor(
     @InjectDataSource() datasource: DataSource,
     private readonly byedCoursesService: ByedCoursesService,
+    private readonly authService: AuthService,
   ) {
     super(datasource);
     this.stripe = new Stripe(Environment.STRIPE_SECRET, { apiVersion: '2023-08-16' });
@@ -47,13 +50,32 @@ export class OrderService extends DatabaseService {
       ],
       mode: 'payment',
       // eslint-disable-next-line max-len
-      success_url: `http://localhost:8000/api/order/user/${userId}/cours/${courseId}/order/${order.id}/success`,
+      success_url: `http://localhost:8000/api/order/user/${userId}/cours/${courseId}/order/${order.id}/email`,
       cancel_url: 'http://localhost:3000/cancel',
     });
     return pay.url;
   }
 
+  async sendEmail(userId: number, courseId: number, orderId: number){
+    const user = await this.database.users.findOneOrFail({ where: { id: userId } });
+    const html =  authEmailPage(`http://localhost:8000/api/order/user/${userId}/cours/${courseId}/order/${orderId}/success`)
+    await this.authService.sendEmail(user.email, html);
+    return true
+  }
+
+
   async complateOrder(userId: number, courseId: number, orderId: number) {
+    const user = await this.database.users.findOneOrFail({ where: { id: userId } });
+
+    const currentTime = new Date();
+    const createdAtTime = new Date(user.lastLoginAt);
+    const timeDifferenceMinutes = Math.floor(
+       (currentTime.getTime() - createdAtTime.getTime()) / (1000 * 60)
+    );
+    if (timeDifferenceMinutes >= 2) {
+       throw new BadRequestException('User was created less than 2 minutes ago');
+    }
+    
     await this.database.orders.findOneOrFail({ where: { id: orderId, isPaid: false } });
     await this.database.orders.update({ id: orderId }, { isPaid: true });
     await this.byedCoursesService.cretedByedCourse(userId, courseId);

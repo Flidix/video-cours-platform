@@ -8,10 +8,12 @@ import { OrderController } from './order.controller';
 
 import { OrderService } from './order.service';
 import { ByedCoursesService } from 'src/byed-courses/byed-courses.service';
+import { AuthService } from 'src/auth/auth.service';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   controllers: [OrderController],
-  providers: [OrderService, ByedCoursesService],
+  providers: [OrderService, ByedCoursesService, AuthService],
   imports: [
     ConfigModule,
     JwtModule.registerAsync({

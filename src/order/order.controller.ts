@@ -16,12 +16,21 @@ export class OrderController {
     return this.orderService.createOrder(id, userId);
   }
 
-  @Get('user/:userId/cours/:courseId/order/:orderId/success')
+  @Post('user/:userId/cours/:courseId/order/:orderId/success')
   complateOrder(
     @Param('userId') userId: number,
     @Param('courseId') courseId: number,
     @Param('orderId') orderId: number,
   ) {
     return this.orderService.complateOrder(userId, courseId, orderId);
+  }
+
+  @Get('user/:userId/cours/:courseId/order/:orderId/email')
+  comfirmEmail(
+    @Param('userId') userId: number,
+    @Param('courseId') courseId: number,
+    @Param('orderId') orderId: number,
+  ) {
+    return this.orderService.sendEmail(userId, courseId, orderId);
   }
 }

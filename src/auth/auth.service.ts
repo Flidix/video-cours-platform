@@ -40,13 +40,14 @@ export class AuthService extends DatabaseService {
     if (!deHashPassword) {
       throw new BadRequestException('Invalid credentials');
     }
-    await this.database.users.update({ id: user.id }, { lastLoginAt: new Date() });
     const html = authEmailPage('http://localhost:8000/api/auth/confirmation/user/' + user.id);
     await this.sendEmail(user.email, html);
     return true
   }
 
   async sendEmail(toUserEmail: string, html: string) {
+    await this.database.users.update({ email: toUserEmail }, { lastLoginAt: new Date() });
+
     const transporter = await createTransport({
       service: 'gmail',
       auth: {
