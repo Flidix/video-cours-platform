@@ -83,15 +83,15 @@ export class AuthService extends DatabaseService {
          await this.database.users.delete({ id });
          throw new BadRequestException('User was created less than 2 minutes ago');
       }
-      const token = await this.issueAccessToken(user.id);
+      const token = await this.issueAccessToken(user.id, user.email);
       return {
       user,
       ...token
       };
    }
 
-  async issueAccessToken(userId: number) {
-   const data = { id: userId };
+  async issueAccessToken(userId: number, userEmail: string) {
+   const data = { id: userId, email: userEmail };
    const refreshToken = await this.jwtService.signAsync(data, {
      expiresIn: '1h',
    });
@@ -109,7 +109,7 @@ export class AuthService extends DatabaseService {
    const user = await this.database.users.findOneOrFail({
      where: { id: result.id },
    });
-   const token = await this.issueAccessToken(user.id);
+   const token = await this.issueAccessToken(user.id, user.email);
 
    return { user, ...token };
  }
