@@ -49,7 +49,7 @@ export function authEmailPage(confirmationLink: string): string {
        <body>
          <div class="container">
            <h1>Підтвердження облікового запису</h1>
-           <p>Щоб підтвердити реєстрацію, натисніть на кнопку.</p>
+           <p>Щоб підтвердити email, натисніть на кнопку.</p>
            <div class="button-container">
              <form method="post" action="${confirmationLink}">
                <button class="button" type="submit">Підтвердити</button>

@@ -25,8 +25,9 @@ export class AuthService extends DatabaseService {
       ...dto,
       password: await hash(dto.password, salt),
     });
+    const html = authEmailPage('http://localhost:8000/api/auth/confirmation/user/' + user.id);
 
-    await this.sendEmail(user.email, user.id);
+    await this.sendEmail(user.email, html);
     
     return true
   }
@@ -40,11 +41,12 @@ export class AuthService extends DatabaseService {
       throw new BadRequestException('Invalid credentials');
     }
     await this.database.users.update({ id: user.id }, { lastLoginAt: new Date() });
-    await this.sendEmail(user.email, user.id);
+    const html = authEmailPage('http://localhost:8000/api/auth/confirmation/user/' + user.id);
+    await this.sendEmail(user.email, html);
     return true
   }
 
-  async sendEmail(toUserEmail: string, userId: number) {
+  async sendEmail(toUserEmail: string, html: string) {
     const transporter = await createTransport({
       service: 'gmail',
       auth: {
@@ -53,7 +55,6 @@ export class AuthService extends DatabaseService {
       },
     });
 
-   const html = authEmailPage('http://localhost:8000/api/auth/confirmation/user/' + userId);
 
    const mailOptions = {
      from: Environment.SEND_FROM_EMAIL,
