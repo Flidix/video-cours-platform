@@ -8,11 +8,21 @@ import { DatabaseService } from '@shared/database/services/database.service';
 
 @Injectable()
 export class UserService extends DatabaseService {
+
   constructor(@InjectDataSource() datasource: DataSource) {
     super(datasource);
   }
 
   async findOneById(id: number) {
+    return await this.database.users.findOneOrFail({
+      where: { id },
+      relations: {
+        courses: true,
+      }
+    })
+  }
+
+  async findOneByIdForAdmin(id: number) {
     const user = await this.database.users.findOneOrFail({
       where: { id },
       relations: {

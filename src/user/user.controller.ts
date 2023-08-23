@@ -12,9 +12,21 @@ import { CurrentUser } from 'src/auth/decorators/curentUser';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get('my-profile')
+  getMyProfile(@CurrentUser('id') id: number) {
+    return this.userService.findOneByIdForAdmin(id);
+  }
+  
+
   @Get(':id')
   getUserById(@Param('id') id: number) {
     return this.userService.findOneById(id);
+  }
+
+  @UseGuards(RoleGuard)
+  @Get('for/admin/:id')
+  getUserByIdForAdmin(@Param('id') id: number) {
+    return this.userService.findOneByIdForAdmin(id);
   }
 
   @UseGuards(RoleGuard)
