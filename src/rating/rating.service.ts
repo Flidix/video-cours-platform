@@ -24,6 +24,7 @@ export class RatingService extends DatabaseService {
   }
 
   async creteRating(dto: CreteRatingDto, userId: number) {
+    await this.database.buedCourses.findOneOrFail({where: { userId, courseId: dto.coursId }});
     const user = await this.database.users.findOneOrFail({ where: { id: userId } });
     const cours = await this.database.courses.findOneOrFail({ where: { id: dto.coursId } });
 
