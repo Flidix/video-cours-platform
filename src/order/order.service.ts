@@ -52,7 +52,6 @@ export class OrderService extends DatabaseService {
         },
       ],
       mode: 'payment',
-      // eslint-disable-next-line max-len
       success_url: `http://localhost:8000/api/order/user/${userId}/cours/${courseId}/order/${order.id}/course-user/${cours.user.id}/email`,
       cancel_url: 'http://localhost:3000/cancel',
     });

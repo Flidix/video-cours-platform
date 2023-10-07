@@ -1,9 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { S3 } from 'aws-sdk';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as uuid from 'uuid';
 
 import { Environment } from '@shared/variables/environment';
 
