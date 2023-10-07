@@ -5,7 +5,7 @@ import { DatabaseService } from '@shared/database/services/database.service';
 @Injectable()
 export class SubscribeService extends DatabaseService {
   async subscribe(toUserId: number, fromUserId: number) {
-    const data = { fromUser: { id: fromUserId }, toUser: { id: toUserId } };
+    const data = { fromUser: { id: fromUserId }, toUser: { id: +toUserId } };
     const isSubscribet = await this.database.subscribes.findOne({ where: { ...data } });
     const user = await this.database.users.findOneOrFail({ where: { id: toUserId } });
 
@@ -17,7 +17,14 @@ export class SubscribeService extends DatabaseService {
       await this.database.subscribes.create({ ...data });
     }
 
-    await this.database.courses.save(user);
+    await this.database.users.save(user);
     return !isSubscribet;
+  }
+
+  async checkSubscribe(toUserId: number, fromUserId: number) {
+    const subscribes = await this.database.subscribes.findOne({
+      where: { fromUser: { id: fromUserId }, toUser: { id: toUserId } },
+    });
+    return !!subscribes;
   }
 }

@@ -1,25 +1,23 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { createTransport } from 'nodemailer';
-import * as bcrypt from "bcryptjs"
-import { DatabaseService } from '@shared/database/services/database.service';
-import { AuthDto } from './dto/auth.dto';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+
+import * as bcrypt from 'bcryptjs';
 import { genSalt, hash } from 'bcryptjs';
-import { authEmailPage } from './pages/auth-email.page';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { JwtService } from '@nestjs/jwt';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { JwtPayload, sign, verify } from 'jsonwebtoken';
+import { createTransport } from 'nodemailer';
+
 import { Environment } from '@shared/variables/environment';
+
+import { DatabaseService } from '@shared/database/services/database.service';
+
+import { AuthDto } from './dto/auth.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+
+import { authEmailPage } from './pages/auth-email.page';
 
 @Injectable()
 export class AuthService extends DatabaseService {
-
-   constructor(@InjectDataSource() datasource: DataSource, private readonly jwtService: JwtService) {
-      super(datasource);
-    }
-
   async register(dto: AuthDto) {
-    await this.database.users.checkNotExists({ email: dto.email });
+    // await this.database.users.checkNotExists({ email: dto.email });
     const salt = await genSalt(10);
     const user = await this.database.users.create({
       ...dto,
@@ -28,21 +26,24 @@ export class AuthService extends DatabaseService {
     const html = authEmailPage('http://localhost:8000/api/auth/confirmation/user/' + user.id);
 
     await this.sendEmail(user.email, html);
-    
-    return true
+
+    return true;
   }
 
-
   async logIn(dto: AuthDto) {
-    const { email, password , username} = dto;
-    const user = await this.database.users.findOneOrFail({ where: { email , username} });
+    const { email, password, username } = dto;
+    const user = await this.database.users.findOneOrFail({ where: { email, username } });
     const deHashPassword = await bcrypt.compare(password, user.password);
     if (!deHashPassword) {
       throw new BadRequestException('Invalid credentials');
     }
     const html = authEmailPage('http://localhost:8000/api/auth/confirmation/user/' + user.id);
     await this.sendEmail(user.email, html);
-    return true
+    const token = await this.issueAccessToken(user.id, user.email);
+    return {
+      user,
+      ...token,
+    };
   }
 
   async sendEmail(toUserEmail: string, html: string) {
@@ -56,63 +57,58 @@ export class AuthService extends DatabaseService {
       },
     });
 
+    const mailOptions = {
+      from: Environment.SEND_FROM_EMAIL,
+      to: toUserEmail,
+      subject: 'nodemailer test',
+      html,
+    };
 
-   const mailOptions = {
-     from: Environment.SEND_FROM_EMAIL,
-     to: toUserEmail,
-     subject: 'nodemailer test',
-     html
-   };
-
-   transporter.sendMail(mailOptions, (err) => {
+    transporter.sendMail(mailOptions, (err) => {
       if (err) {
         console.log(err);
       } else {
-         return true
+        return true;
       }
     });
-   
   }
 
-  async comfirmation(id: number) {
-      const user = await this.database.users.findOneOrFail({ where: { id } });
-      const currentTime = new Date();
-      const createdAtTime = new Date(user.lastLoginAt);
-      const timeDifferenceMinutes = Math.floor(
-         (currentTime.getTime() - createdAtTime.getTime()) / (1000 * 60)
-      );
-      if (timeDifferenceMinutes >= 2) {
-         await this.database.users.delete({ id });
-         throw new BadRequestException('User was created less than 2 minutes ago');
-      }
-      const token = await this.issueAccessToken(user.id, user.email);
-      return {
+  async confirm(id: number) {
+    const user = await this.database.users.findOneOrFail({ where: { id } });
+    const currentTime = new Date();
+    const createdAtTime = new Date(user.lastLoginAt);
+    const timeDifferenceMinutes = Math.floor(
+      (currentTime.getTime() - createdAtTime.getTime()) / (1000 * 60),
+    );
+    if (timeDifferenceMinutes >= 2) {
+      await this.database.users.delete({ id });
+      throw new BadRequestException('User was created less than 2 minutes ago');
+    }
+    const token = await this.issueAccessToken(user.id, user.email);
+    return {
       user,
-      ...token
-      };
-   }
+      ...token,
+    };
+  }
 
   async issueAccessToken(userId: number, userEmail: string) {
-   const data = { id: userId, email: userEmail };
-   const refreshToken = await this.jwtService.signAsync(data, {
-     expiresIn: '1h',
-   });
-   const accessToken = await this.jwtService.signAsync(data, {
-     expiresIn: '7d',
-   });
-   return { refreshToken, accessToken };
- }
+    const refreshToken = sign({ id: userId, email: userEmail }, Environment.JWT_SECRET, {
+      expiresIn: '1h',
+    });
 
- async getNewTokens(dto: RefreshTokenDto) {
-   const result = await this.jwtService.verifyAsync(dto.refreshToken);
-   if (!result) {
-     throw new Error('Invalid refresh token');
-   }
-   const user = await this.database.users.findOneOrFail({
-     where: { id: result.id },
-   });
-   const token = await this.issueAccessToken(user.id, user.email);
+    const accessToken = sign({ id: userId, email: userEmail }, Environment.JWT_SECRET, {
+      expiresIn: '7d',
+    });
+    return { refreshToken, accessToken };
+  }
 
-   return { user, ...token };
- }
+  async getNewTokens(dto: RefreshTokenDto) {
+    const result = (await verify(dto.refreshToken, Environment.JWT_SECRET)) as JwtPayload;
+    if (!result) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+    const token = await this.issueAccessToken(result.userId, result.email);
+
+    return { ...token };
+  }
 }

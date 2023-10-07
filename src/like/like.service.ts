@@ -20,4 +20,11 @@ export class LikeService extends DatabaseService {
     await this.database.courses.save(cours);
     return !isLiked;
   }
+
+  async checkLikeCours(coursId: number, userId: number) {
+    const data = { fromUser: { id: userId }, toCours: { id: coursId } };
+    const isLiked = await this.database.likes.findOne({ where: { ...data } });
+    if (isLiked) return true;
+    return false;
+  }
 }

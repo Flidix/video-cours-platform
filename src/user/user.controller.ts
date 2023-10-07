@@ -1,4 +1,15 @@
-import { Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Put,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { UserService } from './user.service';
 
@@ -7,16 +18,27 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 
 import { CurrentUser } from 'src/auth/decorators/curentUser';
 
+import { UpdateUserDto } from './dto/update-user.dto';
+
 @UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Patch('update')
+  @UseInterceptors(FileInterceptor('userAvatar'))
+  updateUser(
+    @CurrentUser('id') id: number,
+    @Body() dto: UpdateUserDto,
+    @UploadedFile() files: { userAvatar?: Express.Multer.File[] },
+  ) {
+    return this.userService.updateProfile(id, dto, files);
+  }
+
   @Get('my-profile')
   getMyProfile(@CurrentUser('id') id: number) {
     return this.userService.findOneByIdForAdmin(id);
   }
-  
 
   @Get(':id')
   getUserById(@Param('id') id: number) {
@@ -35,7 +57,7 @@ export class UserController {
     return await this.userService.changeRole(id);
   }
 
-  @UseGuards(RoleGuard)
+  // @UseGuards(RoleGuard)
   @Put('oficial/:id')
   async changeOficial(@Param('id') id: number) {
     return await this.userService.changeOficial(id);

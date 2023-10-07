@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 
@@ -22,8 +22,8 @@ export class AuthController {
     return this.authService.getNewTokens(dto);
   }
 
-  @Post('confirmation/user/:id')
+  @Get('confirmation/user/:id')
   confirmation(@Param('id') id: number) {
-    return this.authService.comfirmation(id);
+    return this.authService.confirm(id);
   }
 }

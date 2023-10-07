@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateCoursDto {
   @IsString()
@@ -12,6 +12,6 @@ export class UpdateCoursDto {
   @IsString()
   description: string;
 
-  @IsArray()
+  @IsNotEmpty()
   categoties: number[];
 }

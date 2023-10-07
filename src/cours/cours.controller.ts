@@ -22,14 +22,18 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 import { CurrentUser } from 'src/auth/decorators/curentUser';
 
 import { CreateCoursDto } from './dtos/create-cours.dto';
-import { UpdateCoursDto } from './dtos/updete-cours.dto';
 import { SearchCoursDto } from './dtos/search-cours.dto';
+import { UpdateCoursDto } from './dtos/updete-cours.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('cours')
 export class CoursController {
   constructor(private readonly coursService: CoursService) {}
 
+  @Get('check/:courseId')
+  checkUserCourse(@CurrentUser('id') userId: number, @Param('courseId') courseId: number) {
+    return this.coursService.checkCourseUser(courseId, userId);
+  }
   @Get('search/by')
   searchCours(@Query() search: SearchCoursDto) {
     return this.coursService.searchCours(search);
@@ -49,7 +53,7 @@ export class CoursController {
   @Post()
   @UseInterceptors(FileInterceptor('avatar'))
   createCours(
-    @CurrentUser('id') userId,
+    @CurrentUser('id') userId: number,
     @Body() dto: CreateCoursDto,
     @UploadedFile() files: { avatar?: Express.Multer.File[] },
   ) {
@@ -67,11 +71,13 @@ export class CoursController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('avatar'))
   updateCours(
     @CurrentUser('id') userId: number,
     @Body() dto: UpdateCoursDto,
     @Param('id') id: number,
+    @UploadedFile() files: { avatar?: Express.Multer.File[] },
   ) {
-    return this.coursService.updeteCours(dto, userId, id);
+    return this.coursService.updeteCours(dto, userId, id, files);
   }
 }

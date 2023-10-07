@@ -1,4 +1,6 @@
-import { Column, Entity, OneToMany, CreateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany } from 'typeorm';
+
+import { Environment } from '@shared/variables/environment';
 
 import { BaseEntity } from '@shared/database/entities/base.entity';
 import { BuedCoursesEntity } from 'src/byed-courses/entities/bued-courses.entity';
@@ -21,7 +23,10 @@ export class UserEntity extends BaseEntity {
   @Column()
   password: string;
 
-  @Column({ default: false })
+  @Column({ default: Environment.S3_BUCKET_USER_DEfAULT_PATH })
+  userAvatar: string;
+
+  @Column({ default: true })
   isAdmin: boolean;
 
   @Column({ default: false })
@@ -31,7 +36,10 @@ export class UserEntity extends BaseEntity {
   subscribersCount: number;
 
   @CreateDateColumn()
-  lastLoginAt: Date
+  lastLoginAt: Date;
+
+  @Column({ default: 0 })
+  money: number;
 
   @OneToMany(() => SubscribeEntity, (subscribe) => subscribe.fromUser)
   subscription: SubscribeEntity[];

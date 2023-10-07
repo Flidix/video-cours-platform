@@ -16,6 +16,10 @@ export const EnvironmentSchema = z
       NODE_MAILER_AUTH_EMAIL: z.string(),
       SEND_FROM_EMAIL: z.string(),
       PASSWORD: z.string(),
+      S3_BUCKET_ACCESS_KEY_ID: z.string(),
+      S3_BUCKET_SECRET_ACCESS_KEY: z.string(),
+      S3_BUCKET_USER_DEfAULT_PATH: z.string(),
+      JWT_SECRET: z.string(),
     },
     { required_error: '.env file is required' },
   )

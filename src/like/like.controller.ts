@@ -1,4 +1,4 @@
-import { Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 
 import { LikeService } from './like.service';
 
@@ -14,5 +14,10 @@ export class LikeController {
   @Post(':id')
   async addLikeToBook(@CurrentUser('id') userId: number, @Param('id') coursId: number) {
     return await this.likeService.likeCours(coursId, userId);
+  }
+
+  @Get(':id')
+  async checkLikeToBook(@CurrentUser('id') userId: number, @Param('id') coursId: number) {
+    return await this.likeService.checkLikeCours(coursId, userId);
   }
 }

@@ -4,12 +4,17 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { startOfMonth, subMonths } from 'date-fns';
 import { DataSource } from 'typeorm';
 
+import { FileService, FileTypes } from '../file/file.service';
 import { DatabaseService } from '@shared/database/services/database.service';
+
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService extends DatabaseService {
-
-  constructor(@InjectDataSource() datasource: DataSource) {
+  constructor(
+    @InjectDataSource() datasource: DataSource,
+    private readonly fileService: FileService,
+  ) {
     super(datasource);
   }
 
@@ -18,8 +23,8 @@ export class UserService extends DatabaseService {
       where: { id },
       relations: {
         courses: true,
-      }
-    })
+      },
+    });
   }
 
   async findOneByIdForAdmin(id: number) {
@@ -96,5 +101,12 @@ export class UserService extends DatabaseService {
       .getMany();
 
     return news;
+  }
+
+  async updateProfile(userId: number, dto: UpdateUserDto, file) {
+    const userAvatar = await this.fileService.createFile(FileTypes.userAvatar, file);
+    console.log(userAvatar, dto, userId);
+    await this.database.users.update({ id: userId }, { ...dto, userAvatar });
+    return true;
   }
 }

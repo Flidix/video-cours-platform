@@ -26,6 +26,14 @@ export class CategoryService extends DatabaseService {
     return await this.database.categories.create({ ...dto });
   }
 
+  async searchCategory(search: string) {
+    const categories = await this.database.categories
+      .createQueryBuilder('category')
+      .where('category.name LIKE :search', { search: `%${search}%` })
+      .getMany();
+    return categories;
+  }
+
   async getById(id: number) {
     return await this.database.categories.findOneOrFail({
       where: { id },
@@ -44,21 +52,18 @@ export class CategoryService extends DatabaseService {
         coursToCategory: true,
       },
     });
+    await Promise.all(
+      cours.coursToCategory.map(async (coursToCategory) => {
+        await this.database.coursToCategory.delete({ id: coursToCategory.id });
+      }),
+    );
 
-    if (cours.coursToCategory.length !== 0) {
-      await Promise.all(
-        cours.coursToCategory.map(async (coursToCategory) => {
-          await this.database.coursToCategory.delete({ id: coursToCategory.id });
-        }),
-      );
-
-      for (const id of categoriesIds) {
-        const existingCoursToCategory = await this.database.coursToCategory.findOne({
-          where: { coursId, categoryId: id },
-        });
-        if (!existingCoursToCategory) {
-          await this.database.coursToCategory.create({ coursId, categoryId: id });
-        }
+    for (const id of categoriesIds) {
+      const existingCoursToCategory = await this.database.coursToCategory.findOne({
+        where: { coursId, categoryId: id },
+      });
+      if (!existingCoursToCategory) {
+        await this.database.coursToCategory.create({ coursId, categoryId: id });
       }
     }
   }

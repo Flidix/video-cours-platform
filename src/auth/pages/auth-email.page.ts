@@ -1,5 +1,5 @@
 export function authEmailPage(confirmationLink: string): string {
-   return `
+  return `
      <html>
        <head>
          <style>
@@ -51,7 +51,7 @@ export function authEmailPage(confirmationLink: string): string {
            <h1>Підтвердження облікового запису</h1>
            <p>Щоб підтвердити email, натисніть на кнопку.</p>
            <div class="button-container">
-             <form method="post" action="${confirmationLink}">
+             <form method="get" action="${confirmationLink}">
                <button class="button" type="submit">Підтвердити</button>
              </form>
            </div>
@@ -59,4 +59,4 @@ export function authEmailPage(confirmationLink: string): string {
        </body>
      </html>
    `;
- }
+}

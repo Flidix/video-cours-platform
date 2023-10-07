@@ -20,10 +20,10 @@ export class CommentToCommentService extends DatabaseService {
   }
 
   async deleteComment(commentId: number, userId: number) {
-    const candidat = await this.database.commentsToComments.findOneOrFail({
+    const candidate = await this.database.commentsToComments.findOneOrFail({
       where: { id: commentId, userId },
     });
-    await this.database.commentsToComments.delete({ id: candidat.id });
+    await this.database.commentsToComments.delete({ id: candidate.id });
     return true;
   }
 

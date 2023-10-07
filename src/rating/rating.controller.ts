@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 
 import { RatingService } from './rating.service';
 
@@ -13,6 +13,11 @@ import { UpdateRatingDto } from './dtos/update-rating.dto';
 @Controller('rating')
 export class RatingController {
   constructor(private readonly ratingService: RatingService) {}
+
+  @Get(':id')
+  getRating(@CurrentUser('id') userId: number, @Param('id') id: number) {
+    return this.ratingService.checkIfRated(userId, id);
+  }
 
   @Post()
   createRating(@CurrentUser('id') userId: number, @Body() dto: CreteRatingDto) {

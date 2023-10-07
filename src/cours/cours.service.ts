@@ -30,7 +30,17 @@ export class CoursService extends DatabaseService {
       .orderBy(`cours.${filter[0]}`, filter[1] === 'DESC' ? 'DESC' : 'ASC')
       .andWhere('cours.isOficial = :isOficial', { isOficial: search.isOficial })
       .leftJoinAndSelect('cours.user', 'user')
+      .skip((search.page - 1) * search.limit)
+      .take(search.limit)
       .getMany();
+  }
+
+  async checkCourseUser(courseId: number, userId: number) {
+    const cours = await this.database.courses.findOneOrFail({ where: { id: courseId } });
+    if (userId !== cours.userId) {
+      return false;
+    }
+    return true;
   }
 
   async changeCoursOficial(id: number) {
@@ -58,18 +68,16 @@ export class CoursService extends DatabaseService {
   }
 
   async createCours(dto: CreateCoursDto, userId: number, avatar) {
-    const avatarPath = this.fileService.createFile(FileTypes.AVATAR, avatar);
+    const avatarPath = await this.fileService.createFile(FileTypes.AVATAR, avatar);
     const user = await this.database.users.findOneOrFail({ where: { id: userId } });
-
     const cours = await this.database.courses.create({
       ...dto,
       avatar: avatarPath,
       user,
       userId,
-      isOficial: user.isOficial,
+      isOficial: !user.isOficial,
     });
     await this.categoryService.addCategoryToCourse(cours.id, dto.categoties);
-
     return cours;
   }
 
@@ -93,23 +101,51 @@ export class CoursService extends DatabaseService {
       },
     });
     if (cours.userId !== userId) {
-      await this.database.buedCourses.findOneOrFail({ where: { courseId: id, userId } });
+      const cours = await this.database.buedCourses.findOne({ where: { courseId: id, userId } });
+      if (!cours) {
+        return { cours: await this.getNotBuyedCourse(id), isBuyed: false };
+      }
     }
-    return cours;
+    return { cours, isBuyed: true };
+  }
+
+  async getNotBuyedCourse(coursId: number) {
+    return await this.database.courses.findOneOrFail({
+      where: { id: coursId },
+      relations: {
+        user: true,
+        ratings: {
+          fromUser: true,
+        },
+        coursToCategory: {
+          category: true,
+        },
+      },
+      order: {
+        ratings: {
+          createdAt: 'DESC',
+        },
+      },
+    });
   }
 
   async deleteCours(userId: number, coursId: number) {
     await this.checkCourse(userId, coursId);
+    const toCours = await this.database.courses.findOneOrFail({ where: { id: coursId } });
     await this.database.coursToCategory.delete({ coursId });
+    await this.database.likes.delete({ toCours });
+    await this.database.ratings.delete({ courseId: coursId });
+    await this.database.buedCourses.delete({ courseId: coursId });
     await this.database.courses.delete({ id: coursId });
     return true;
   }
 
-  async updeteCours(dto: UpdateCoursDto, userId: number, coursId: number) {
+  async updeteCours(dto: UpdateCoursDto, userId: number, coursId: number, avatar) {
+    const avatarPath = await this.fileService.createFile(FileTypes.AVATAR, avatar);
     const { categoties, ...newCours } = dto;
     await this.checkCourse(userId, coursId);
     await this.categoryService.addCategoryToCourse(coursId, categoties);
-    await this.database.courses.update({ id: coursId }, newCours);
+    await this.database.courses.update({ id: coursId }, { ...newCours, avatar: avatarPath });
     return true;
   }
 }

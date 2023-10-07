@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 export class AuthDto {
   @IsEmail()
@@ -7,9 +7,6 @@ export class AuthDto {
   @IsString()
   username: string;
 
-  @MinLength(6, {
-    message: 'неменше 6 символів',
-  })
   @IsString()
   password: string;
 }

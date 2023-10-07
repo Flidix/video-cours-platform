@@ -1,17 +1,18 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { decode } from 'jsonwebtoken';
 import { DataSource } from 'typeorm';
 
 import { UserService } from '../../user/user.service';
 import { DatabaseService } from '@shared/database/services/database.service';
 
+import { UserEntity } from 'src/user/entities/user.entity';
+
 @Injectable()
 export class RoleGuard extends DatabaseService implements CanActivate {
   constructor(
     @InjectDataSource() datasource: DataSource,
-    private readonly jwtService: JwtService,
     private readonly userService: UserService,
   ) {
     super(datasource);
@@ -26,7 +27,7 @@ export class RoleGuard extends DatabaseService implements CanActivate {
       if (bearer !== 'Bearer' || !token) {
         throw new UnauthorizedException({ message: 'forbidden' });
       }
-      const userId = this.jwtService.verify(token);
+      const userId = decode(token) as UserEntity;
       const user = await this.userService.findOneById(userId.id);
 
       if (user.isAdmin === true) {

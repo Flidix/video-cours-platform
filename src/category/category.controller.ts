@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 
 import { CategoryService } from './category.service';
 
@@ -17,6 +27,10 @@ export class CategoryController {
     return this.categoryService.createCategory(dto);
   }
 
+  @Get('search')
+  searchCategory(@Query('search') search: string) {
+    return this.categoryService.searchCategory(search);
+  }
   @Get()
   getCategories() {
     return this.categoryService.getCategories();

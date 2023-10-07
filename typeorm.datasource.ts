@@ -7,7 +7,6 @@ const isDist = __dirname.endsWith('dist');
 
 const filesExtension = isDist ? '.js' : '.ts';
 
-
 const dataSource = new DataSource({
   type: 'postgres',
   host: Environment.DATABASE_HOST,

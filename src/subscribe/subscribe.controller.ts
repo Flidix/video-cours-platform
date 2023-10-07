@@ -1,4 +1,4 @@
-import { Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 
 import { SubscribeService } from './subscribe.service';
 
@@ -14,5 +14,10 @@ export class SubscribeController {
   @Post(':id')
   async addLikeToBook(@CurrentUser('id') userId: number, @Param('id') coursId: number) {
     return await this.subscribeService.subscribe(coursId, userId);
+  }
+
+  @Get(':id')
+  async checkSubscribe(@CurrentUser('id') userId: number, @Param('id') id: number) {
+    return await this.subscribeService.checkSubscribe(id, userId);
   }
 }

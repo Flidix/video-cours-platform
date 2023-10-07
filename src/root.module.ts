@@ -32,7 +32,6 @@ import { DatabaseModule } from '@shared/database/database.module';
     ListenModule,
     ByedCoursesModule,
     OrderModule,
-    ServeStaticModule.forRoot({ rootPath: path.resolve(__dirname, 'static') }),
     CategoryModule,
     CommentToCommentModule,
   ],

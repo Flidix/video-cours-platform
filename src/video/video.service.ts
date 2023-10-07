@@ -21,7 +21,7 @@ export class VideoService extends DatabaseService {
   }
 
   async addVideoToCours(dto: AddVideoToCoursDto, userId: number, video) {
-    const videoPath = this.fileService.createFile(FileTypes.VIDEO, video);
+    const videoPath = await this.fileService.createFile(FileTypes.VIDEO, video);
     const fromUser = await this.database.users.findOneOrFail({ where: { id: userId } });
     const toCours = await this.database.courses.findOneOrFail({
       where: { id: dto.toCoursId, userId },

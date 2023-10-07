@@ -23,10 +23,18 @@ export class RatingService extends DatabaseService {
     }
   }
 
+  async checkIfRated(userId: number, coursId: number) {
+    return await this.database.ratings.findOneOrFail({ where: { userId, courseId: coursId } });
+  }
+
   async creteRating(dto: CreteRatingDto, userId: number) {
-    await this.database.buedCourses.findOneOrFail({where: { userId, courseId: dto.coursId }});
+    await this.database.ratings.checkNotExists({ userId, courseId: dto.coursId });
     const user = await this.database.users.findOneOrFail({ where: { id: userId } });
     const cours = await this.database.courses.findOneOrFail({ where: { id: dto.coursId } });
+
+    if (cours.userId !== userId) {
+      await this.database.buedCourses.findOneOrFail({ where: { userId, courseId: dto.coursId } });
+    }
 
     const rating = await this.database.ratings.create({
       description: dto.description,
