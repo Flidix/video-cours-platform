@@ -18,7 +18,7 @@ import { ResponseInterceptor } from '@shared/common/interceptors/response.interc
   app.setGlobalPrefix(Environment.API_PREFIX);
   app.enableCors({
     credentials: true,
-    origin: Environment.ALLOWED_ORIGINS.split(';'),
+    origin: Environment.ALLOWED_ORIGINS,
   });
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));

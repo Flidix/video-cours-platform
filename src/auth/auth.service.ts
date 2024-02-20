@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 
 import * as bcrypt from 'bcryptjs';
 import { genSalt, hash } from 'bcryptjs';
-import { JwtPayload, sign, verify } from 'jsonwebtoken';
+import { JwtPayload, TokenExpiredError, sign, verify } from 'jsonwebtoken';
 import { createTransport } from 'nodemailer';
 
 import { Environment } from '@shared/variables/environment';
@@ -23,7 +23,7 @@ export class AuthService extends DatabaseService {
       ...dto,
       password: await hash(dto.password, salt),
     });
-    const html = authEmailPage('http://localhost:8000/api/auth/confirmation/user/' + user.id);
+    const html = authEmailPage(Environment.ALLOWED_ORIGINS + '/confirm/user/' + user.id);
 
     await this.sendEmail(user.email, html);
 
@@ -37,13 +37,9 @@ export class AuthService extends DatabaseService {
     if (!deHashPassword) {
       throw new BadRequestException('Invalid credentials');
     }
-    const html = authEmailPage('http://localhost:8000/api/auth/confirmation/user/' + user.id);
+    const html = authEmailPage(Environment.ALLOWED_ORIGINS + '/confirm/user/' + user.id);
     await this.sendEmail(user.email, html);
-    const token = await this.issueAccessToken(user.id, user.email);
-    return {
-      user,
-      ...token,
-    };
+    return true;
   }
 
   async sendEmail(toUserEmail: string, html: string) {
@@ -80,7 +76,7 @@ export class AuthService extends DatabaseService {
     const timeDifferenceMinutes = Math.floor(
       (currentTime.getTime() - createdAtTime.getTime()) / (1000 * 60),
     );
-    if (timeDifferenceMinutes >= 2) {
+    if (timeDifferenceMinutes >= 60) {
       await this.database.users.delete({ id });
       throw new BadRequestException('User was created less than 2 minutes ago');
     }
@@ -93,22 +89,24 @@ export class AuthService extends DatabaseService {
 
   async issueAccessToken(userId: number, userEmail: string) {
     const refreshToken = sign({ id: userId, email: userEmail }, Environment.JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: 2630000,
     });
 
     const accessToken = sign({ id: userId, email: userEmail }, Environment.JWT_SECRET, {
-      expiresIn: '7d',
+      expiresIn: 15,
     });
     return { refreshToken, accessToken };
   }
 
   async getNewTokens(dto: RefreshTokenDto) {
-    const result = (await verify(dto.refreshToken, Environment.JWT_SECRET)) as JwtPayload;
-    if (!result) {
+    try {
+      const result = (await verify(dto.refreshToken, Environment.JWT_SECRET)) as JwtPayload;
+      return this.issueAccessToken(result.userId, result.email);
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        throw new UnauthorizedException('Token has expired');
+      }
       throw new UnauthorizedException('Invalid refresh token');
     }
-    const token = await this.issueAccessToken(result.userId, result.email);
-
-    return { ...token };
   }
 }
